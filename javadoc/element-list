@@ -1,0 +1,9 @@
+module:proto4j.swing
+org.proto4j.swing
+org.proto4j.swing.annotation
+org.proto4j.swing.core
+org.proto4j.swing.core.desc
+org.proto4j.swing.core.desc.layout
+org.proto4j.swing.core.desc.margin
+org.proto4j.swing.core.handler
+org.proto4j.swing.laf
