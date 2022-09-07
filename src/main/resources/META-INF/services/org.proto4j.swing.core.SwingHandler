@@ -1,0 +1,5 @@
+org.proto4j.swing.core.handler.LayoutHandler
+org.proto4j.swing.core.handler.PositionHandler
+org.proto4j.swing.core.handler.BasicOptionHandler
+org.proto4j.swing.core.handler.MarginHandler
+org.proto4j.swing.core.handler.WindowHandler
