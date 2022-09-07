@@ -33,6 +33,10 @@ import java.lang.annotation.Annotation;
 
 public class ModelHandler extends AbstractSwingHandler<Model> {
 
+    static {
+        CACHE.register(new ModelHandler());
+    }
+
     /**
      * @return the annotation type that can be handled
      */
