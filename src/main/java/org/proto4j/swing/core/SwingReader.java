@@ -150,16 +150,8 @@ public class SwingReader implements AutoCloseable {
             AnnotationContext<SwingWindow> wctx =
                     AnnotationContext.exchange(SwingWindow.class, field);
             if (!wctx.isPresent()) {
-                AnnotationContext<Nested> nctx =
-                        AnnotationContext.exchange(Nested.class, field);
-
-                if (!nctx.isPresent()) {
-                    // This definition error will be ignored by default
-                    return;
-                }
-
-                Entry<?> nested = Entry.of(field.getType());
-                entry.putNestedGUI(field.getName(), nested);
+                // This definition error will be ignored by default
+                return;
             }
             id       = wctx.annotationValue().value();
             provider = manager.get(p -> p.getClass() == wctx.annotationValue().provider());
@@ -170,12 +162,21 @@ public class SwingReader implements AutoCloseable {
 
         Objects.requireNonNull(provider, "Undefined LAFProvider");
         Component component = null;
-        if (!Modifier.isFinal(field.getModifiers())) {
-            component = provider.getComponent(field.getType());
+        AnnotationContext<Nested> nctx =
+                AnnotationContext.exchange(Nested.class, field);
+
+        if (!nctx.isPresent()) {
+            Entry<?> nested = Entry.of(field.getType());
+            entry.putNestedGUI(field.getName(), nested);
+            component = (Component) nested.getGUI();
         } else {
-            enterCriticalSection(field);
-            component = (Component) field.get(root);
-            leaveCriticalSection(field);
+            if (!Modifier.isFinal(field.getModifiers())) {
+                component = provider.getComponent(field.getType());
+            } else {
+                enterCriticalSection(field);
+                component = (Component) field.get(root);
+                leaveCriticalSection(field);
+            }
         }
 
         createFieldReference(entry, root, field, id, component);
