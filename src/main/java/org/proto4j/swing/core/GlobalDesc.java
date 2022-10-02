@@ -24,6 +24,7 @@
 
 package org.proto4j.swing.core; //@date 05.09.2022
 
+import org.proto4j.swing.annotation.*;
 import org.proto4j.swing.core.desc.ComponentDesc;
 import org.proto4j.swing.core.desc.GenericDesc;
 import org.proto4j.swing.core.desc.LayoutDesc;
@@ -37,8 +38,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.ServiceLoader;
 
 /**
  * This class wraps general and utility methods on providing the option
@@ -52,7 +55,7 @@ public final class GlobalDesc {
     /**
      * The standard directory name for the defined options.
      */
-    public static final String OPTIONS_PREFIX = "/META-INF/options/";
+    public static final String OPTIONS_PREFIX = "META-INF/options/";
 
     // covers all defined options
     private static final Properties sharedOptions = new Properties();
@@ -240,21 +243,18 @@ public final class GlobalDesc {
         if (optionsInitialized) {
             return null;
         }
+        registerDefaults();
 
-        URL url = GlobalDesc.class.getResource(OPTIONS_PREFIX);
+        URL url = ClassLoader.getSystemResource(OPTIONS_PREFIX);
         if (url == null) {
-            throw new UnsupportedOperationException("No options found");
+            return null;
         }
 
         try {
-            File optionsDir = new File(url.getFile());
-            if (!optionsDir.isDirectory()) {
-                throw new UnsupportedOperationException("Options directory not found");
-            }
-
+            File optionsDir = new File(url.getFile() + "/");
             File[] options = optionsDir.listFiles();
             if (options == null || options.length == 0) {
-                throw new UnsupportedOperationException("No option files found");
+                return null;
             }
 
             for (File file : options) {
@@ -272,5 +272,14 @@ public final class GlobalDesc {
         }
 
         return null;
+    }
+
+    private static void registerDefaults() {
+        sharedOptions.putIfAbsent(Layout.class.getName(), new GlobalOptions.LayoutOptions());
+        sharedOptions.putIfAbsent(Margin.class.getName(), new GlobalOptions.MarginOptions());
+        sharedOptions.putIfAbsent(Model.class.getName(), new GlobalOptions.ModelOptions());
+        sharedOptions.putIfAbsent(Position.class.getName(), new GlobalOptions.PositionOptions());
+        sharedOptions.putIfAbsent(Option.class.getName(), new GlobalOptions.SwingOptions());
+        sharedOptions.putIfAbsent(SwingWindow.class.getName(), new GlobalOptions.SwingWindowOptions());
     }
 }

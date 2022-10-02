@@ -94,10 +94,10 @@ public class ModelDesc extends GenericDesc<Model> {
     }
 
     private Class<?> getBaseClass(Class<?> cls) {
-        Class<?> base = cls.getDeclaringClass();
+        Class<?> base = cls.getSuperclass();
         while (true) {
-            Class<?> next = base.getDeclaringClass();
-            if (next == Object.class) {
+            Class<?> next = base.getSuperclass();
+            if (next == Object.class || next == null) {
                 break;
             }
             base = next;

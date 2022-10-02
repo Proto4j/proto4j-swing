@@ -58,7 +58,7 @@ public class BorderLayoutDesc extends LayoutDesc {
             if (options != null) {
                 String key = options.getProperty("LAYOUT_CONSTRAINTS");
 
-                if (hasOption(key)) {
+                if (desc.hasOption(key)) {
                     constraints = desc.get(key).toString();
                 }
             }

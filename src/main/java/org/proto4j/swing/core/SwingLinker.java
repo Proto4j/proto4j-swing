@@ -108,10 +108,15 @@ public class SwingLinker {
         ComponentDesc srcDesc = reference.getDescription();
 
         if (src instanceof JMenuBar) {
-            if (!(dest instanceof JRootPane)) {
-                throw new UnsupportedOperationException("dest is not a JRootPane");
+            if (dest instanceof JFrame) {
+                ((JFrame) dest).setJMenuBar((JMenuBar) src);
             }
-            ((JRootPane) dest).setJMenuBar((JMenuBar) src);
+            else {
+                if (!(dest instanceof JRootPane)) {
+                    throw new UnsupportedOperationException("dest is not a JRootPane");
+                }
+                ((JRootPane) dest).setJMenuBar((JMenuBar) src);
+            }
             return;
         }
 

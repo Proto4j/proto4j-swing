@@ -165,7 +165,7 @@ public class SwingReader implements AutoCloseable {
         AnnotationContext<Nested> nctx =
                 AnnotationContext.exchange(Nested.class, field);
 
-        if (!nctx.isPresent()) {
+        if (nctx.isPresent()) {
             Entry<?> nested = Entry.of(field.getType());
             entry.putNestedGUI(field.getName(), nested);
             component = (Component) nested.getGUI();
