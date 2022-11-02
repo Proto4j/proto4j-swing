@@ -35,21 +35,8 @@ public final class GlobalOptions {
             put("H_GAP", "hgap");
             put("V_GAP", "vgap");
             put("ROWS", "rows");
+            put("ALIGN", "align");
             put("COLUMNS", "columns");
-            put("GB_GRIDX", "gridx");
-            put("GB_GRIDY", "gridy");
-            put("GB_GRID_WIDTH", "gridWidth");
-            put("GB_GRID_HEIGHT", "gridHeight");
-            put("GB_WEIGHTX", "weightx");
-            put("GB_WEIGHTY", "weighty");
-            put("GB_ANCHOR", "anchor");
-            put("GB_FILL", "gridx");
-            put("GB_INSETS", "insets");
-            put("GB_IPADX", "ipadx");
-            put("GB_IPADY", "ipady");
-            put("SP_V_CONSTRAINTS", "vConstraints");
-            put("SP_C_CONSTRAINTS", "cConstraints");
-            put("SP_PAD", "pad");
             put("BOX_AXIS", "axis");
         }
     }
@@ -89,16 +76,29 @@ public final class GlobalOptions {
             put("INIT", "init");
             put("BACKGROUND", "background");
             put("FOREGROUND", "foreground");
+            put("ENABLED", "enabled");
         }
     }
 
     public static class PositionOptions extends Properties {
         public PositionOptions() {
-            put("HEIGHT", "height");
-            put("WIDTH", "width");
             put("X", "x");
             put("Y", "y");
             put("LAYOUT_CONSTRAINTS", "constraints");
+            put("GB_GRIDX", "gridx");
+            put("GB_GRIDY", "gridy");
+            put("GB_GRID_WIDTH", "gridWidth");
+            put("GB_GRID_HEIGHT", "gridHeight");
+            put("GB_WEIGHTX", "weightx");
+            put("GB_WEIGHTY", "weighty");
+            put("GB_ANCHOR", "anchor");
+            put("GB_FILL", "gridx");
+            put("GB_INSETS", "insets");
+            put("GB_IPADX", "ipadx");
+            put("GB_IPADY", "ipady");
+            put("SP_V_CONSTRAINTS", "vConstraints");
+            put("SP_C_CONSTRAINTS", "cConstraints");
+            put("SP_PAD", "pad");
         }
     }
 
@@ -107,6 +107,16 @@ public final class GlobalOptions {
             put("CLOSE_OPERATION", "closeOperation");
             put("RESIZABLE", "resizable");
             put("ALWAYS_ON_TOP", "alwaysOnTop");
+        }
+    }
+
+    public static class BoundsOptions extends Properties {
+        public BoundsOptions() {
+            put("MIN", "min");
+            put("MAX", "max");
+            put("BOUNDS", "BOUNDS");
+            put("SIZE", "size");
+            put("PREFERRED", "preferred");
         }
     }
 

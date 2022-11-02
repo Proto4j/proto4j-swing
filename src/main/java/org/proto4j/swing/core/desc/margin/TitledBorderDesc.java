@@ -1,5 +1,6 @@
 package org.proto4j.swing.core.desc.margin; //@date 19.02.2022
 
+import org.proto4j.swing.annotation.Option;
 import org.proto4j.swing.core.GlobalDesc;
 import org.proto4j.swing.core.desc.MarginDesc;
 
@@ -28,13 +29,16 @@ public class TitledBorderDesc extends MarginDesc {
             return null;
         }
 
-        String key = options.getProperty("TITLE");
+        String key = options.getProperty("TITLE", UNDEFINED);
         if (!hasOption(key)) {
             return null;
         }
 
         String title = get(key).toString();
-        key = options.getProperty("LINE_COLOR");
+        if (Option.Query.isQuery(title)) {
+            title = new Option.Query(title, null).get();
+        }
+        key = options.getProperty("LINE_COLOR", UNDEFINED);
         if (hasOption(key)) {
             Color color = GlobalDesc.getColor(get(key).toString());
 

@@ -1,7 +1,7 @@
 /**
  * This Java module turns an annotated class into a Swing-Application. It
  * supports extensions for the used LookAndFeel and own implementations of
- * {@link java.awt.Component}s.
+ * {@code java.awt.Component}s.
  *
  * @author MatrixEditor
  * @author Proto4j

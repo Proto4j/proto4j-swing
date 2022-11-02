@@ -133,6 +133,9 @@ public class SwingReader implements AutoCloseable {
         }
 
         Objects.requireNonNull(provider, "Undefined LAFProvider");
+        if (!(root instanceof Component)) {
+            throw new IllegalArgumentException("Annotated component not an instance of Component.class");
+        }
         Component component = (Component) root;
         createFieldReference(entry, root, root.getClass(), id, component);
     }

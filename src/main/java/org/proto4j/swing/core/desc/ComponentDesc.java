@@ -24,6 +24,8 @@
 
 package org.proto4j.swing.core.desc; //@date 05.09.2022
 
+import org.proto4j.swing.FieldReference;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -39,11 +41,6 @@ import java.util.Objects;
  * @since 1.0
  */
 public abstract class ComponentDesc {
-
-    /**
-     * The standard name for the base component.
-     */
-    public static final String BASE_NAME = "this";
 
     /**
      * The annotated element declared in the GUI class. This can also be the
@@ -102,7 +99,7 @@ public abstract class ComponentDesc {
             fieldName     = ((Field) field).getName();
             componentType = ((Field) field).getType();
         } else {
-            fieldName     = BASE_NAME;
+            fieldName     = FieldReference.THIS;
             componentType = parent.getClass();
         }
     }

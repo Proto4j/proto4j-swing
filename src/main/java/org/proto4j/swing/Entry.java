@@ -111,8 +111,8 @@ public interface Entry<G> {
      *
      * @param name the field's name
      * @param type gui's class type
-     * @return the {@link Entry} storing all information about the GUI
      * @param <T_G> the GUI type
+     * @return the {@link Entry} storing all information about the GUI
      */
     public <T_G> Entry<T_G> getNestedGUI(String name, Class<T_G> type);
 
@@ -208,4 +208,15 @@ public interface Entry<G> {
      * @param src the event listener object
      */
     public void linkAction(Object src);
+
+    /**
+     * Tries to link the given EventListener to the specified target.
+     *
+     * @param <T> the listener type
+     * @param fieldName the target field name
+     * @param cls the listener base class
+     * @param listener the event listener object
+     * @return {@code true} if the listener has been added successfully
+     */
+    public <T extends EventListener> boolean linkAction(String fieldName, Class<T> cls, T listener);
 }

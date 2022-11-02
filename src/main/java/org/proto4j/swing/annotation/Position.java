@@ -72,6 +72,8 @@ public @interface Position {
      * Returns the height of the annotated component.
      *
      * @return The height of the annotated component
+     * @see Bounds#size()
+     * @deprecated since 1.1.0
      */
     int height() default -1;
 
@@ -79,6 +81,8 @@ public @interface Position {
      * Returns the width of the annotated component.
      *
      * @return The width of the annotated component
+     * @see Bounds#size()
+     * @deprecated since 1.1.0
      */
     int width() default -1;
 

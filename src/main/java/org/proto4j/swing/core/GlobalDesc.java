@@ -30,6 +30,7 @@ import org.proto4j.swing.core.desc.GenericDesc;
 import org.proto4j.swing.core.desc.LayoutDesc;
 import org.proto4j.swing.core.desc.MarginDesc;
 
+import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
@@ -38,10 +39,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.ServiceLoader;
 
 /**
  * This class wraps general and utility methods on providing the option
@@ -56,19 +56,16 @@ public final class GlobalDesc {
      * The standard directory name for the defined options.
      */
     public static final String OPTIONS_PREFIX = "META-INF/options/";
-
+    // the system property
+    public static final String DESC_PATH_PROPERTY = "proto4j.swing.desc.path";
     // covers all defined options
     private static final Properties sharedOptions = new Properties();
-
     // used to determine whether the options were loaded
     private static volatile boolean optionsInitialized;
 
-    // the system property
-    public static final String DESC_PATH_PROPERTY = "proto4j.swing.desc.path";
-
     static {
         String pathBase = GenericDesc.class.getPackageName();
-        String path = String.join(":", pathBase + ".layout", pathBase + ".margin");
+        String path     = String.join(":", pathBase + ".layout", pathBase + ".margin");
 
         // This value is used to set the default package paths
         System.setProperty(DESC_PATH_PROPERTY, path);
@@ -221,12 +218,27 @@ public final class GlobalDesc {
 
     /**
      * Tries to locate the given color name.
+     * <p>
+     *  RGB values can be represented
+     * through three numbers separated by a {@code ,}. It is also possible
+     * to query a color that has been added to the {@link UIDefaults} of the
+     * current {@link LookAndFeel}. To do that, just put the
+     * {@link Option.Query#indicator} in font of the color's name.
      *
      * @param value the color's name
      * @return a new {@link Color} object representing the color
      */
     public static Color getColor(String value) {
-        //
+        if (value.contains(",")) {
+            int[] rgb = Arrays.stream(value.split(","))
+                              .mapToInt(Integer::parseInt).toArray();
+            if (rgb.length == 3) {
+                return new Color(rgb[0], rgb[1], rgb[2]);
+            }
+        }
+        else if (Option.Query.isQuery(value)) {
+            return UIManager.getColor(value.substring(1));
+        }
         return Color.getColor(value);
     }
 
@@ -251,8 +263,8 @@ public final class GlobalDesc {
         }
 
         try {
-            File optionsDir = new File(url.getFile() + "/");
-            File[] options = optionsDir.listFiles();
+            File   optionsDir = new File(url.getFile() + "/");
+            File[] options    = optionsDir.listFiles();
             if (options == null || options.length == 0) {
                 return null;
             }

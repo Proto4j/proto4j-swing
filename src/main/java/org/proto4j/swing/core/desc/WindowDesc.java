@@ -58,18 +58,18 @@ public class WindowDesc extends GenericDesc<SwingWindow> {
         if (component instanceof Frame) {
             Frame frame = (Frame) component;
 
-            String key = options.getProperty("RESIZABLE", "undefined");
+            String key = options.getProperty("RESIZABLE", UNDEFINED);
             if (hasOption(key)) {
                 frame.setResizable(getOption(key, Boolean.class));
             }
 
-            key = options.getProperty("ALWAYS_ON_TOP", "undefined");
+            key = options.getProperty("ALWAYS_ON_TOP", UNDEFINED);
             if (hasOption(key)) {
                 frame.setAlwaysOnTop(getOption(key, Boolean.class));
             }
 
             if (frame instanceof JFrame) {
-                key = options.getProperty("CLOSE_OPERATION", "undefined");
+                key = options.getProperty("CLOSE_OPERATION", UNDEFINED);
                 if (hasOption(key)) {
                     //noinspection MagicConstant
                     ((JFrame) frame).setDefaultCloseOperation(getOption(key, Integer.class));

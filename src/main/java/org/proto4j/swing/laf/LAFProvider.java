@@ -330,4 +330,22 @@ public interface LAFProvider {
         return new Frame();
     }
 
+    /**
+     * @return a new {@link JDialog} object
+     */
+    public default JDialog getJDialog() { return new JDialog(); }
+
+    /**
+     * @return a new {@link JFileChooser} object
+     */
+    public default JFileChooser getFileChooser() {
+        return new JFileChooser();
+    }
+
+    /**
+     * @return a new {@link JColorChooser} object
+     */
+    public default JColorChooser getColorChooser() {
+        return new JColorChooser();
+    }
 }

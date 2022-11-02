@@ -25,7 +25,6 @@
 package org.proto4j.swing.core.desc; //@date 05.09.2022
 
 import org.proto4j.swing.annotation.Position;
-import org.proto4j.swing.core.GlobalDesc;
 
 import java.awt.*;
 import java.util.Properties;
@@ -52,37 +51,27 @@ public class PositionDesc extends GenericDesc<Position> {
      */
     @Override
     public void applyTo(Component component) {
+        // This annotation is mainly used to store layout information for
+        // other SwingHandler objects.
         Properties options = getDefinedOptions();
 
-        Point location = getLocation(component.getLocation(), options);
-
-        int width  = component.getWidth();
-        int height = component.getHeight();
-
-        String hl = options.getProperty("HEIGHT", "undefined");
-        if (hasOption(hl)) {
-            height = getOption(hl, Integer.class);
-        }
-
-        hl = options.getProperty("WIDTH", "undefined");
-        if (hasOption(hl)) {
-            width = getOption(hl, Integer.class);
-        }
-
-        Rectangle bounds = new Rectangle(location, new Dimension(width, height));
-        component.setBounds(bounds);
+        Point loc = getLocation(component.getLocation(), options);
+        component.setBounds(loc.x, loc.y, component.getWidth(), component.getHeight());
     }
 
 
     private Point getLocation(Point base, Properties options) {
-        String xPos = options.getProperty("X", "undefined");
-        if (hasOption(xPos)) {
-            base.x = getOption(xPos, Integer.class);
+        String xPos = options.getProperty("X", UNDEFINED);
+        int    temp;
+        if (hasOption(xPos)
+                && (temp = getOption(xPos, Integer.class)) != INVALID_INT) {
+            base.x = temp;
         }
 
-        String yPos = options.getProperty("Y", "undefined");
-        if (hasOption(yPos)) {
-            base.y = getOption(yPos, Integer.class);
+        String yPos = options.getProperty("Y", UNDEFINED);
+        if (hasOption(yPos)
+                && (temp = getOption(yPos, Integer.class)) != INVALID_INT) {
+            base.y = temp;
         }
         return base;
     }

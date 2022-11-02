@@ -24,7 +24,9 @@
 
 package org.proto4j.swing.core.desc; //@date 05.09.2022
 
+import org.proto4j.swing.annotation.Bounds;
 import org.proto4j.swing.annotation.Option;
+import org.proto4j.swing.annotation.Option.Query;
 import org.proto4j.swing.core.GlobalDesc;
 
 import javax.swing.*;
@@ -57,7 +59,7 @@ public class OptionDesc extends GenericDesc<Option> {
         Properties options = getDefinedOptions();
 
         // Apply the component's background color
-        String bg = options.getProperty("BACKGROUND", "undefined");
+        String bg = options.getProperty("BACKGROUND", UNDEFINED);
         if (hasOption(bg)) {
             Color color = GlobalDesc.getColor(getOption(bg, String.class));
 
@@ -69,7 +71,7 @@ public class OptionDesc extends GenericDesc<Option> {
         }
 
         // Apply the component's foreground color
-        String fg = options.getProperty("FOREGROUND", "undefined");
+        String fg = options.getProperty("FOREGROUND", UNDEFINED);
         if (hasOption(fg)) {
             Color color = GlobalDesc.getColor(getOption(fg, String.class));
             // Currently the returned color will be null if the format
@@ -81,9 +83,13 @@ public class OptionDesc extends GenericDesc<Option> {
 
         // This option set the text of text-based containers such as JLabel or
         // AbstractButton.class
-        String txt = options.getProperty("TEXT", "undefined");
+        String txt = options.getProperty("TEXT", UNDEFINED);
         if (hasOption(txt)) {
             String textData = getOption(txt, String.class);
+            if (Query.isQuery(textData)) {
+                Query query = new Query(textData, component);
+                textData = query.get();
+            }
 
             if (component instanceof JLabel) {
                 ((JLabel) component).setText(textData);
@@ -96,14 +102,25 @@ public class OptionDesc extends GenericDesc<Option> {
             }
         }
 
-        String title = options.getProperty("TITLE", "undefined");
+        String title = options.getProperty("TITLE", UNDEFINED);
         if (hasOption(title)) {
             String titleData = getOption(title, String.class);
+            if (Query.isQuery(titleData)) {
+                Query query = new Query(titleData, component);
+                titleData = query.get();
+            }
 
             if (component instanceof Frame) {
                 ((Frame) component).setTitle(titleData);
             }
         }
+
+        String pEnabled = options.getProperty("ENABLED", UNDEFINED);
+        if (hasOption(pEnabled)) {
+            boolean enabled = getOption(pEnabled, Boolean.class);
+            component.setEnabled(enabled);
+        }
+
     }
 
 

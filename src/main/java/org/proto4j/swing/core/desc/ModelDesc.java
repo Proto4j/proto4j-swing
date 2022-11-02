@@ -57,7 +57,7 @@ public class ModelDesc extends GenericDesc<Model> {
         Objects.requireNonNull(component);
 
         Properties options = getDefinedOptions();
-        String key = options.getProperty("TYPE");
+        String     key     = options.getProperty("TYPE", UNDEFINED);
         if (!hasOption(key)) {
             // Actually, this is unlikely to happen, because the value() method
             // always returns a class value.
@@ -69,12 +69,14 @@ public class ModelDesc extends GenericDesc<Model> {
             return;
         }
 
-        String methodName = "set";
-        Class<?> base = getBaseClass(cls);
+        String   methodName = "set";
+        Class<?> base       = getBaseClass(cls);
 
         // Now, we try to create the setXXXModel() method by inspecting
         // the base class name
-        String clsName = base.getSimpleName().replace("Model", "");
+        String clsName = base.getSimpleName()
+                             .replace("Model", "")
+                             .replace("Abstract", "");
 
         // This replacement is needed as it removed unnecessary List or Table
         // tags at the beginning og the name
@@ -87,8 +89,8 @@ public class ModelDesc extends GenericDesc<Model> {
             Object model = cls.getDeclaredConstructor().newInstance();
             target.invoke(component, model);
         } catch (ReflectiveOperationException e) {
-          // This exception is ignored by default
-          // REVISIT: maybe add a global logger
+            // This exception is ignored by default
+            // REVISIT: maybe add a global logger
         }
 
     }
@@ -96,6 +98,13 @@ public class ModelDesc extends GenericDesc<Model> {
     private Class<?> getBaseClass(Class<?> cls) {
         Class<?> base = cls.getSuperclass();
         while (true) {
+            if (base.getSimpleName().contains("Abstract")) {
+                for (Class<?> iface : base.getInterfaces()) {
+                    if (iface.getSimpleName().contains("Model")) {
+                        return iface;
+                    }
+                }
+            }
             Class<?> next = base.getSuperclass();
             if (next == Object.class || next == null) {
                 break;

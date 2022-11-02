@@ -26,12 +26,15 @@ package org.proto4j.swing.core.desc; //@date 05.09.2022
 
 import org.proto4j.swing.core.GlobalDesc;
 
+import javax.swing.*;
 import java.awt.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.IllegalFormatCodePointException;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * The base class for all option related descriptions.
@@ -43,6 +46,20 @@ import java.util.Set;
  * @param <A> the annotation type
  */
 public abstract class GenericDesc<A extends Annotation> {
+
+    /**
+     * A simple property descriptor indicating that a property wasn't found.
+     *
+     * @since 1.1.0
+     */
+    public static final String UNDEFINED = "<>";
+
+    /**
+     * A simple constant specifying whether the option is valid.
+     *
+     * @since 1.1.0
+     */
+    public static final int INVALID_INT = -1;
 
     /**
      * The annotation type this description is bound to.
@@ -90,6 +107,9 @@ public abstract class GenericDesc<A extends Annotation> {
      */
     public Object get(String key) {
         Objects.requireNonNull(key);
+        if (key.equals(UNDEFINED)) {
+            return null;
+        }
         return properties.get(key);
     }
 
@@ -137,6 +157,7 @@ public abstract class GenericDesc<A extends Annotation> {
             // be no exception either. see #hasOption()
             return null;
         }
+
         return cls.cast(value);
     }
 
@@ -225,6 +246,5 @@ public abstract class GenericDesc<A extends Annotation> {
         }
         return properties;
     }
-
 
 }

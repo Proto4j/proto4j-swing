@@ -44,6 +44,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class FieldReference<V> {
 
     /**
+     * When fields want to reference the root component, they should use this
+     * variable to point to it.
+     * <p>
+     * <b>Note: </b>The {@link #get()} method will return the parent/ root
+     * component on field references with {@code $this} as its name.
+     *
+     * @since 1.1.0
+     */
+    public static final String THIS = "$this";
+
+    /**
      * The component number.
      */
     private final int id;
@@ -94,6 +105,11 @@ public final class FieldReference<V> {
     public V get() throws NullPointerException, ClassCastException {
         synchronized (getHook()) {
             Object value = desc.getInstance();
+            if (desc.getFieldName().equals(THIS)) {
+                // See THIS documentation for more information
+                //noinspection unchecked
+                return (V) parent;
+            }
             Objects.requireNonNull(value, "Linked instance is null");
             //noinspection unchecked
             return (V) value;
@@ -109,7 +125,7 @@ public final class FieldReference<V> {
     public void set(V value) throws NullPointerException {
         // this method should not take any action if we want
         // to change the root element.
-        if (desc.getFieldName().equals("this")) {
+        if (desc.getFieldName().equals(THIS)) {
             return;
         }
 

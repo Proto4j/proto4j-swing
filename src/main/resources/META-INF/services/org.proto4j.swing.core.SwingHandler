@@ -4,3 +4,4 @@ org.proto4j.swing.core.handler.BasicOptionHandler
 org.proto4j.swing.core.handler.MarginHandler
 org.proto4j.swing.core.handler.ModelHandler
 org.proto4j.swing.core.handler.WindowHandler
+org.proto4j.swing.core.handler.BoundsHandler

@@ -124,7 +124,7 @@ public abstract class AbstractEntry<G> implements Entry<G> {
 
             if (!(src instanceof Method)) {
                 if (base.isPresent()) {
-                    Object ls = createListener( base.annotationValue().type(), src, null);
+                    Object ls = createListener(base.annotationValue().type(), src, null);
                     if (ls != null) {
                         addListener(ls, base);
                     }
@@ -149,6 +149,28 @@ public abstract class AbstractEntry<G> implements Entry<G> {
         }
     }
 
+    @Override
+    public <T extends EventListener> boolean linkAction(String fieldName, Class<T> cls, T listener) {
+        FieldReference<?> ref = getDeclaredField(fieldName);
+        if (ref == null) {
+            return false;
+        }
+        try {
+            Object component = ref.get();
+            String name = "add" + cls.getSimpleName();
+
+            Method targetMethod =
+                    component.getClass().getMethod(name, cls);
+
+            targetMethod.setAccessible(true);
+            targetMethod.invoke(component, listener);
+            ref.addEventListener(listener);
+            return true;
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
+    }
+
     protected void addListener(Object listener, AnnotationContext<ActionHandler> ctx) {
         String[] targets = ctx.annotationValue().value();
 
@@ -161,15 +183,19 @@ public abstract class AbstractEntry<G> implements Entry<G> {
 
                 Object component = ref.get();
                 try {
-                    String                         name = "add" + ctx.annotationValue().type().getSimpleName();
-                    Class<? extends EventListener> type = ctx.annotationValue().type();
+                    String name = "add"
+                            + ctx.annotationValue().type().getSimpleName();
+                    Class<? extends EventListener> type =
+                            ctx.annotationValue().type();
 
                     Method targetMethod =
                             component.getClass().getMethod(name, type);
 
                     targetMethod.setAccessible(true);
 
-                    targetMethod.invoke(component, type.cast(listener));
+                    EventListener el = type.cast(listener);
+                    targetMethod.invoke(component, el);
+                    ref.addEventListener(el);
                 } catch (ReflectiveOperationException e) {
                     e.printStackTrace();
                     // ignore errors

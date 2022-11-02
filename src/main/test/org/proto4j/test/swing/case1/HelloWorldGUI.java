@@ -10,7 +10,7 @@ public class HelloWorldGUI {
 
     @SwingWindow
     @Layout(BorderLayout.class)
-    @Position(width = 300, height = 300)
+    @Bounds(size = {300, 300})
     private JFrame mainFrame;
 
     public HelloWorldGUI() {

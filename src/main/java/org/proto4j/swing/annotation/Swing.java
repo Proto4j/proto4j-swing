@@ -52,12 +52,15 @@ import java.lang.annotation.Target;
  *      &#064;Swing  // can only be used on field declarations
  *      private JSeparator separator;
  * </pre>
+ * <p>
+ * Changes on version {@code 1.1.0}: This annotation can be used on classes
+ * also to provide more generation flexibility.
  *
  * @see LAFProvider
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface Swing {
     /**
      * @return The order this component is added to the parent component.

@@ -1,7 +1,11 @@
 package org.proto4j.swing.annotation;//@date 12.02.2022
 
+import javax.swing.*;
 import java.awt.*;
 import java.lang.annotation.*;
+import java.lang.reflect.Method;
+import java.util.IllegalFormatCodePointException;
+import java.util.function.Supplier;
 
 /**
  * The {@code Option} annotation is used to set general information to the annotated
@@ -9,6 +13,26 @@ import java.lang.annotation.*;
  * <p>
  * <b>TIP:</b> This annotation is {@link Repeatable}, so there can be multiple
  * definition on each component. Duplicate attributes will be overridden.
+ * <p>
+ * Changes since {@code 1.1.0}: Dynamic method invocation to retrieve values
+ * for each attribute can now be used. You can simply query the {@link UIManager}
+ * for a property, e.g.:
+ * <pre>{@code
+ *      @Option(text = "@UIManager#some.property.text")
+ *      private JLabel label;
+ * }</pre>
+ * te example above would query the given property string from the
+ * {@link UIManager}. Use {@code @} as the first character to indicate that
+ * a query should be executed. Accepted values for naw are the following:
+ * <li>
+ * {@code UIManager#key} will be translated into {@link UIManager#getString(Object)}
+ * and the result will be converted into a {@link String}.
+ * </li>
+ * <li>
+ * {@code class#method} will call the <b>static</b> method of class
+ * {@code class}, for example {@code text = "@FooClass#getTextFor"}, if the
+ * referenced method got the following signature: {@code getTextFor(Component)}.
+ * </li>
  *
  * @since 1.0
  */
@@ -66,5 +90,154 @@ public @interface Option {
      * @return The foreground color name
      */
     String foreground() default "";
+
+    /**
+     * Specifies whether the annotated component should be enabled or
+     * disabled after initialization.
+     *
+     * @return {@code true} if the annotated component should be enabled;
+     *         {@code false} otherwise
+     */
+    boolean enabled() default true;
+
+    /**
+     * A class interpreting an option string and returning a qualified
+     * {@link String} as a result.
+     *
+     * @see Option
+     * @since 1.1.0
+     */
+    // For future releases: maybe add getter
+    public static final class Query implements Supplier<String> {
+
+        /**
+         * The query string indicator, which is currently defined to be
+         * {@code @}.
+         *
+         * @since 1.1.0
+         */
+        public static final char indicator = '@';
+
+        /**
+         * The currently defined query separator that marks the start for the
+         * query argument.
+         *
+         * @since 1.1.0
+         */
+        public static final char separator = '#';
+
+        /**
+         * The query {@link String}.
+         */
+        private final String data;
+
+        /**
+         * The referenced component.
+         */
+        private final Object component;
+
+        /**
+         * A reference to the class that will be used to get the method
+         * that will be invoked.
+         */
+        private Class<?> cls;
+
+        /**
+         * Tha target method, which will be invoked.
+         */
+        private Method target;
+
+        /**
+         * The argument that will be used to invoke the target method.
+         */
+        private Object argument;
+
+        public static boolean isQuery(String text) {
+            return text != null && !text.isEmpty() &&text.charAt(0) == indicator;
+        }
+
+        /**
+         * Creates a new {@link Query} object and tries to parse the given
+         * query string.
+         *
+         * @param data the statement to parse
+         * @param component the referenced component
+         */
+        public Query(String data, Object component) {
+            this.data      = data;
+            this.component = component;
+            try {
+                parseStatement();
+            } catch (ClassNotFoundException e) {
+                System.err.println(getClass().getSimpleName() + ':' + e.toString());
+            }
+        }
+
+        /**
+         * Parses the given query statement if possible and throws an
+         * exception on invalid input.
+         *
+         * @throws IllegalFormatCodePointException if no separator was found
+         * @throws ClassNotFoundException          if the provided class was not found
+         */
+        private void parseStatement() throws ClassNotFoundException {
+            if (data == null || data.charAt(0) != indicator) {
+                return;
+            }
+
+            int pos = data.indexOf(separator);
+            if (pos == -1) {
+                throw new IllegalFormatCodePointException(separator);
+            }
+
+            String className = data.substring(1, pos);
+            argument = data.substring(pos + 1);
+
+            if (className.equals(UIManager.class.getSimpleName())) {
+                cls = UIManager.class;
+            } else {
+                cls = Class.forName((String) argument);
+                for (Method method : cls.getMethods()) {
+                    if (method.getName().equals(argument)) {
+                        target = method;
+                        break;
+                    }
+                }
+                argument = target.getParameterCount() == 0 ? null : component;
+            }
+        }
+
+        /**
+         * Fetches a result.
+         *
+         * @return a result
+         */
+        @Override
+        public synchronized String get() {
+            String result = null;
+            try {
+                if (cls == UIManager.class) {
+                    result = UIManager.getString(argument);
+                } else {
+                    if (target != null) {
+                        // Extra temp argument is necessary, because we don't
+                        // want a NPE to be thrown.
+                        Object temp = null;
+                        if (argument == null) {
+                            temp = target.invoke(null);
+                        } else {
+                            temp = target.invoke(null, argument);
+                        }
+                        if (temp != null) {
+                            result = temp.toString();
+                        }
+                    }
+                }
+            } catch (ReflectiveOperationException e) {
+                System.err.println(getClass().getSimpleName() + ": " + e.toString());
+            }
+            return result;
+        }
+    }
 
 }
