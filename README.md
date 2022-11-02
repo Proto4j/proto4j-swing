@@ -25,7 +25,7 @@ Next, the components have to be specified. Most likely these components are not 
 // in class HelloWorldGUI
 @SwingWindow
 @Layout(BorderLayout.class)
-@Position(width = 200, height = 200)
+@Bounds(size = {200, 200})
 private JFrame mainFrame;
 ````
 
@@ -80,7 +80,7 @@ For now, we created the GUI without any action listeners. The frame and button w
         // JOptionPane.showMessageDialog(...)
     }
     ````
-   
+
 ### 3. Starting the GUI
 
 At this point everything is ready to use:
@@ -89,8 +89,10 @@ At this point everything is ready to use:
 public static void main(String[]args){
     // create a basic entry
     Entry<HelloWorldGUI> entry = Entry.of(HelloWorldGUI.class);
-    // add the action listener
+    // add the action listener by adding it with the ActionHandler annotation
     entry.linkAction(new HelloWorldListener());
+    // or add it directly
+    entry.linkAction("button", ActionListener.class, new HelloWorldListener());
     entry.start();
 }
 ````
