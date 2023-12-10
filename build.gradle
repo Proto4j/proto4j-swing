@@ -1,0 +1,94 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group = "io.github.proto4j"
+archivesBaseName = "proto4j-swing"
+version = "0.0.2"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+javadoc {
+    options.tags = [
+            'apiNote:a:API Note:',
+            'implSpec:a:Implementation Requirements:',
+            'implNote:a:Implementation Note:'
+    ]
+}
+
+publishing {
+    repositories {
+        maven {
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/proto4j/proto4j-swing")
+            credentials {
+                username = project.findProperty("p4j.user")
+                password = project.findProperty("p4j.swing.key")
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifactId = 'proto4j-swing'
+            groupId = 'io.github.proto4j'
+            version = '0.0.1'
+
+            pom {
+                name = 'Proto4j-Swing'
+                packaging = 'jar'
+                artifactId = 'proto4j-swing'
+                groupId = 'io.github.proto4j'
+                description = 'Creating GUIs with Java-Swing by placing Java-Annotations on their components.'
+                url = 'https://github.com/Proto4j/proto4j-swing'
+
+                scm {
+                    connection = 'scm:git:https://github.com/Proto4j/proto4j-swing'
+                    developerConnection = 'scm:git:https://github.com/Proto4j/proto4j-swing'
+                    url = 'https://github.com/Proto4j/proto4j-swing'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'Proto4j-Group'
+                        name = 'Proto4j'
+                        email = 'not@supported.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}

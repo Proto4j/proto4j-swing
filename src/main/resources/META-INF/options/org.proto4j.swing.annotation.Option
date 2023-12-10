@@ -1,0 +1,8 @@
+CONSTRAINTS=constraints
+TARGET=target
+TITLE=title
+TEXT=text
+INIT=init
+BACKGROUND=background
+FOREGROUND=foreground
+ENABLED=enabled

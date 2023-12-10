@@ -1,0 +1,17 @@
+X=x
+Y=y
+LAYOUT_CONSTRAINTS=constraints
+GB_GRIDX=gridx
+GB_GRIDY=gridy
+GB_GRID_WIDTH=gridWidth
+GB_GRID_HEIGHT=gridHeight
+GB_WEIGHTX=weightx
+GB_WEIGHTY=weighty
+GB_ANCHOR=anchor
+GB_FILL=gridx
+GB_INSETS=insets
+GB_IPADX=ipadx
+GB_IPADY=ipady
+SP_V_CONSTRAINTS=vConstraints
+SP_C_CONSTRAINTS=cConstraints
+SP_PAD=pad

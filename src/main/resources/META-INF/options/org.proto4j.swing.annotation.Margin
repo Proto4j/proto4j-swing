@@ -1,0 +1,15 @@
+BEVEL_TYPE=bevelType
+SHADOW=shadow
+HIGHLIGHT=highlight
+LINE_COLOR =lineColor
+LINE_THICKNESS=lineThickness
+LINE_ROUNDED=lineRounded
+ETCHED_TYPE=etchedType
+ALIGN=align
+LEFT=emptyLeft
+RIGHT=emptyRight
+TOP=emptyTop
+BOTTOM=emptyBottom
+TITLE=title
+COMPOUND_INSIDE=compoundInside
+COMPOUND_OUTSIDE=compoundInside
